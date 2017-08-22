@@ -9,3 +9,9 @@ libraryDependencies ++= Seq(
   "org.seleniumhq.selenium" %  "selenium-java"            % "3.0.1",
   "com.lihaoyi"             %% "scalatags"                % "0.6.5"
 )
+
+publishMavenStyle := true
+
+publishTo := Some("bintray-wongelz-guidebook" at "https://api.bintray.com/maven/wongelz/guidebook/guidebook/")
+
+credentials += Credentials(Path.userHome / ".bintray" / ".credentials")
