@@ -9,11 +9,17 @@ Usage
 1. Add the following to your build.sbt
 
 ```
+
+resolvers += Resolver.bintrayRepo("wongelz", "guidebook")
+
 libraryDependencies ++= Seq(
-  "com.github.wongelz"           %% "guidebook"                % "0.0.1-SNAPSHOT"  % Test
+  "com.github.wongelz"           %% "guidebook"                % "0.0.1"  % Test
 )
 
-testOptions in Test ++= Seq(Tests.Argument(TestFrameworks.ScalaTest, "-o"), Tests.Argument(TestFrameworks.ScalaTest, "-C", "com.wongelz.guidebook.GuidebookReporter"))
+testOptions in Test ++= Seq(
+  Tests.Argument(TestFrameworks.ScalaTest, "-o"),
+  Tests.Argument(TestFrameworks.ScalaTest, "-C", "com.github.wongelz.guidebook.GuidebookReporter")
+)
 ```
 
 (Optional) If parallel browser windows (suite executions) are causing problems
