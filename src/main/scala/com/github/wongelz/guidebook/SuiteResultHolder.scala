@@ -12,12 +12,12 @@ class SuiteResultHolder {
     suiteList += result
   }
 
-  def suiteJourneys: List[(SuiteResult, List[Journey])] =
-    suiteList.toList.map(s => (s, s.journeys))
+  def journeys: List[Journey] =
+    suiteList.toList.flatMap(_.journeys)
 
   def totalDuration: Duration =
     Duration.ofMillis(suiteList.map(s => s.duration.getOrElse(0L)).sum)
 
   def started: Instant =
-    Instant.ofEpochMilli(suiteList.map(_.startEvent.timeStamp).min)
+    suiteList.map(_.timestamp).min
 }

@@ -10,10 +10,11 @@ $(function () {
             modal.find('#modal-body-other').addClass("hidden");
         } else if (target.hasClass("screenshot")) {
             var img = $("<img/>")
+                .attr("class", "img-fluid img-thumbnail")
                 .attr("src", target.attr("href"));
             var link = $("<a/>")
                 .attr("href", target.attr("href"))
-                .attr("parent", "_blank")
+                .attr("target", "_blank")
                 .append(img);
             modal.find('.modal-title').html(target.attr('title'));
             modal.find('#modal-body-other').empty();

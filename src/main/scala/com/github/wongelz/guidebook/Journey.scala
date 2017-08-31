@@ -31,6 +31,8 @@ case class Step(
     notes: List[String]) {
 
   lazy val screenshot = s"screenshots/${id.hash}.png"
+
+  def screenshot(screen: Screen) = s"screenshots/${id.hash}${screen.suffix}.png"
 }
 
 sealed trait Result

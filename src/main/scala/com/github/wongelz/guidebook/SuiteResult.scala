@@ -1,5 +1,7 @@
 package com.github.wongelz.guidebook
 
+import java.time.Instant
+
 import org.scalatest.events._
 
 import scala.annotation.tailrec
@@ -8,20 +10,22 @@ case class SuiteResult(
     suiteId: String,
     suiteName: String,
     suiteClassName: Option[String],
+    timestamp: Instant,
     duration: Option[Long],
-    startEvent: SuiteStarting,
-    endEvent: Event,
-    eventList: collection.immutable.IndexedSeq[Event],
-    testsSucceededCount: Int,
-    testsFailedCount: Int,
-    testsIgnoredCount: Int,
-    testsPendingCount: Int,
-    testsCanceledCount: Int,
-    scopesPendingCount: Int,
-    isCompleted: Boolean) {
+    journeys: List[Journey],
+    isCompleted: Boolean)
 
-  def journeys: List[Journey] =
-    getJourneys(eventList.toList, Nil, Nil, Nil, Nil).reverse
+object SuiteResult {
+  def apply(suiteStarting: SuiteStarting, suiteCompleted: SuiteCompleted, suiteEvents: List[Event]): SuiteResult = {
+    SuiteResult(suiteStarting.suiteId, suiteStarting.suiteName, suiteStarting.suiteClassName,
+      Instant.ofEpochMilli(suiteStarting.timeStamp), suiteCompleted.duration,
+      getJourneys(suiteEvents, Nil, Nil, Nil, Nil).reverse, isCompleted = true)
+  }
+
+  def apply(suiteStarting: SuiteStarting, suiteAborted: SuiteAborted, suiteEvents: List[Event]): SuiteResult =
+    SuiteResult(suiteStarting.suiteId, suiteStarting.suiteName, suiteStarting.suiteClassName,
+      Instant.ofEpochMilli(suiteStarting.timeStamp), suiteAborted.duration,
+      getJourneys(suiteEvents, Nil, Nil, Nil, Nil).reverse, isCompleted = false)
 
   @tailrec
   private def getJourneys(events: List[Event], scope: List[String], alerts: List[String], notes: List[String], accum: List[Journey]): List[Journey] = events match {

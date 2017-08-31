@@ -1,5 +1,7 @@
 package com.github.wongelz.guidebook
 
+import java.util
+
 import org.scalatest._
 import org.scalatest.concurrent.Eventually
 import org.scalatest.selenium.{Driver, WebBrowser}
@@ -18,15 +20,23 @@ trait Guidebook extends WordSpec
   abstract override def run(testName: Option[String], args: Args): Status = {
     implicitlyWait(Span(0, Seconds))
     setCaptureDir("target/guidebook/screenshots")
-    webDriver.manage().window().maximize()
+    webDriver.manage().window().setPosition(new org.openqa.selenium.Point(0, 0))
 
     super.run(testName, args)
   }
 
   protected override def runTest(testName: String, args: Args): Status = {
+    val screens = Screens.All
+    resizeViewport(screens.head)
+
     val status = super.runTest(testName, args)
+
     val stepId = StepId(suiteId, testName)
     capture to s"${stepId.hash}.png"
+    for (s <- screens.tail) {
+      resizeViewport(s)
+      capture to s"${stepId.hash}${s.suffix}.png"
+    }
     status
   }
 
@@ -35,5 +45,15 @@ trait Guidebook extends WordSpec
       switch to window(handle)
       close()
     }
+  }
+
+  private def resizeViewport(screen: Screen) = {
+    val browserPadding = executeScript("""
+      return [window.outerWidth - window.innerWidth,
+              window.outerHeight - window.innerHeight];
+    """).asInstanceOf[util.List[Long]]
+    webDriver.manage().window().setSize(new org.openqa.selenium.Dimension(
+      screen.width + browserPadding.get(0).toInt,
+      screen.height + browserPadding.get(1).toInt))
   }
 }
