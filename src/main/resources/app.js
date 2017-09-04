@@ -2,31 +2,23 @@ $(function () {
     $('#modal').on('show.bs.modal', function (event) {
         var modal = $(this);
         var target = $(event.relatedTarget);
+        modal.find(".modal-body").each(function() {
+            $(this).addClass("hidden");
+        });
+        modal.find('.modal-title').html(target.attr("title"));
         if (target.hasClass("cause")) {
-            modal.find('.modal-title').html(target.attr("title"));
             modal.find('#modal-body-cause pre code').empty();
             modal.find('#modal-body-cause pre code').html(target.data('cause'));
             modal.find('#modal-body-cause').removeClass("hidden");
-            modal.find('#modal-body-other').addClass("hidden");
         } else if (target.hasClass("screenshot")) {
-            var img = $("<img/>")
-                .attr("class", "img-fluid img-thumbnail")
-                .attr("src", target.attr("href"));
-            var link = $("<a/>")
-                .attr("href", target.attr("href"))
-                .attr("target", "_blank")
-                .append(img);
-            modal.find('.modal-title').html(target.attr('title'));
-            modal.find('#modal-body-other').empty();
-            modal.find('#modal-body-other').append(link);
-            modal.find('#modal-body-cause').addClass("hidden");
-            modal.find('#modal-body-other').removeClass("hidden");
+            modal.find('#modal-body-screenshot a').attr("href", target.attr("href"));
+            modal.find('#modal-body-screenshot img').attr("src", target.attr("href"));
+            modal.find('#modal-body-screenshot figcaption').html(target.attr("title"));
+            modal.find('#modal-body-screenshot').removeClass("hidden");
         } else {
-            modal.find('.modal-title').html(target.attr('title'));
-            modal.find('#modal-body-other').empty();
-            modal.find('#modal-body-other').html(target.data('info'));
-            modal.find('#modal-body-cause').addClass("hidden");
-            modal.find('#modal-body-other').removeClass("hidden");
+            modal.find('#modal-body-message').empty();
+            modal.find('#modal-body-message').html(target.data('info'));
+            modal.find('#modal-body-message').removeClass("hidden");
         }
     })
 });

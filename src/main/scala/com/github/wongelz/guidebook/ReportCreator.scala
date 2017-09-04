@@ -52,25 +52,7 @@ object ReportCreator {
               getJourneysHtml(r.journeys, Nil, screen)
             )
           },
-          div(id := "modal", cls := "modal fade", tabindex := "-1", role := "dialog")(
-            div(cls := "modal-dialog modal-lg", role := "document")(
-              div(cls := "modal-content")(
-                div(cls := "modal-header")(
-                  h5(cls := "modal-title")("Failure"),
-                  button(`type` := "button", cls := "close", data("dismiss") := "modal", aria.label := "Close")(
-                    span(aria.hidden := "true")(raw("&times;"))
-                  )
-                ),
-                div(id := "modal-body-cause", cls := "modal-body hidden")(
-                  pre(
-                    code(
-                    )
-                  ),
-                ),
-                div(id := "modal-body-other", cls := "modal-body")
-              )
-            )
-          )
+          modal
         ),
         script(src := "https://code.jquery.com/jquery-3.1.1.slim.min.js"),
         script(src := "https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"),
@@ -79,6 +61,37 @@ object ReportCreator {
       )
     )
   }
+
+  private def modal =
+    div(id := "modal", cls := "modal fade", tabindex := "-1", role := "dialog")(
+      div(cls := "modal-dialog modal-lg", role := "document")(
+        div(cls := "modal-content")(
+          div(cls := "modal-header")(
+            h5(cls := "modal-title")("Failure"),
+            button(`type` := "button", cls := "close", data("dismiss") := "modal", aria.label := "Close")(
+              span(aria.hidden := "true")(raw("&times;"))
+            )
+          ),
+          div(id := "modal-body-screenshot", cls := "modal-body hidden")(
+            figure(cls := "thumbnail")(
+              a(target := "_blank")(
+                img(cls := "img-fluid img-thumbnail")
+              ),
+              figcaption(cls := "figure-caption")
+            )
+          ),
+          div(id := "modal-body-cause", cls := "modal-body hidden")(
+            pre(
+              code(
+              )
+            ),
+          ),
+          div(id := "modal-body-message", cls := "modal-body hidden")(
+
+          )
+        )
+      )
+    )
 
   private def getJourneysHtml(journeys: List[Journey], scope: List[String], screen: Screen): List[Frag] = {
     journeys match {
