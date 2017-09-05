@@ -61,13 +61,15 @@ object SuiteResult {
     }
   }
 
-  private def addStep(step: Step, scope: List[String], journeys: List[Journey]): List[Journey] = journeys match {
-    case Nil =>
-      Journey(scope, step :: Nil) :: Nil
-    case j :: js if j.scope == scope =>
-      Journey(scope, step :: j.steps) :: js
-    case js =>
-      Journey(scope, step :: Nil) :: js
+  private def addStep(step: Step, scope: List[String], journeys: List[Journey]): List[Journey] = {
+    journeys match {
+      case Nil =>
+        Journey(scope, step :: Nil) :: Nil
+      case j :: js if j.scope == scope =>
+        Journey(scope, j.steps :+ step) :: js
+      case js =>
+        Journey(scope, step :: Nil) :: js
+    }
   }
 
 }

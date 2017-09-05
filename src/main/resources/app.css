@@ -1,14 +1,20 @@
-pre code {
+#modal-body-cause pre {
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+    background-color: #000;
+}
+
+#modal-body-cause pre code {
     font-size: 80%;
     color: #bbbbbb;
 }
 
-#modal-body-cause pre {
-    background-color: #000;
+#modal-body-screenshot {
+    text-align: center;
 }
 
-.modal-body img {
-    width: 100%;
+#modal-body-screenshot img {
+    max-height: calc(100vh - 200px);
 }
 
 .hidden {

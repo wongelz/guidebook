@@ -5,6 +5,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 import scalatags.Text.all._
+import scalatags.Text.tags2
 
 object ReportCreator {
 
@@ -88,6 +89,11 @@ object ReportCreator {
           ),
           div(id := "modal-body-message", cls := "modal-body hidden")(
 
+          ),
+          div(cls := "modal-footer hidden")(
+            tags2.nav(
+              ul(cls := "pagination pagination-sm justify-content-center")
+            )
           )
         )
       )
@@ -114,7 +120,7 @@ object ReportCreator {
               )
             )
         }
-        {heading} :: {getThumbnailsHtml(j.steps.reverse, screen)} :: getJourneysHtml(js, j.scope, screen)
+        {heading} :: {getJourneyHtml(j, screen)} :: getJourneysHtml(js, j.scope, screen)
     }
   }
 
@@ -127,18 +133,18 @@ object ReportCreator {
     }
   }
 
-  private def getThumbnailsHtml(steps: List[Step], screen: Screen) =
+  private def getJourneyHtml(journey: Journey, screen: Screen) =
     div(cls := "row row-eq-height")(
-      steps.map { s =>
+      journey.steps.map { s =>
         div(cls := "col-lg-2 col-md-3 col-sm-4")(
           figure(cls := "thumbnail")(
             s.result match {
               case Result.Passed =>
-                a(cls := "screenshot", href := s.screenshot(screen), data("toggle") := "modal", data("target") := "#modal", title := s.caption)(
+                a(cls := "screenshot", href := s.screenshot(screen), data("toggle") := "modal", data("target") := "#modal", data("step") := s.id.hash, data("journey") := journey.description, title := s.caption)(
                   img(cls := "figure-img img-fluid img-thumbnail bg-success", src := s.screenshot(screen))
                 )
               case Result.Failed =>
-                a(cls := "screenshot", href := s.screenshot(screen), data("toggle") := "modal", data("target") := "#modal", title := s.caption)(
+                a(cls := "screenshot", href := s.screenshot(screen), data("toggle") := "modal", data("target") := "#modal", data("step") := s.id.hash, data("journey") := journey.description, title := s.caption)(
                   img(cls := "figure-img img-fluid img-thumbnail bg-danger", src := s.screenshot(screen))
                 )
               case Result.Canceled =>
