@@ -19,7 +19,9 @@ class GuidebookReporter extends ResourcefulReporter {
     targetDir.mkdirs()
 
   copyResource(getResource("app.css"), targetDir, "app.css")
-  copyResource(getResource("app.js"), targetDir, "app.js")
+  copyResource(getResource("assets/client-jsdeps.min.js"), targetDir, "client-jsdeps.min.js")
+  copyResource(getResource("assets/client-opt.js"), targetDir, "client-opt.js")
+  copyResource(getResource("assets/client-opt.js.map"), targetDir, "client-opt.js.map")
 
   private var eventList = new ListBuffer[Event]()
   private var runEndEvent: Option[Event] = None
