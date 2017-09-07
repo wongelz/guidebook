@@ -1,5 +1,8 @@
 package com.github.wongelz.guidebook
 
+import java.io.{ByteArrayOutputStream, PrintStream}
+
+import com.github.wongelz.guidebook.Result.Failed
 import org.apache.commons.codec.digest.DigestUtils
 
 case class Journey(
@@ -17,22 +20,33 @@ case class Journey(
   lazy val passed: Boolean = steps.forall(_.result == Result.Passed)
 }
 
-case class StepId(suiteId: String, testName: String) {
-  def hash = new String(DigestUtils.sha1Hex(s"$suiteId$testName"))
-}
-
 case class Step(
-    id: StepId,
+    id: String,
     caption: String,
     result: Result,
-    message: Option[String],
-    throwable: Option[Throwable],
+    stacktrace: Option[String],
     alerts: List[String],
     notes: List[String]) {
 
-  lazy val screenshot = s"screenshots/${id.hash}.png"
+  lazy val screenshot = s"screenshots/$id.png"
 
-  def screenshot(screen: Screen) = s"screenshots/${id.hash}${screen.suffix}.png"
+  def screenshot(screen: Screen) = s"screenshots/$id${screen.suffix}.png"
+}
+
+object Step {
+
+  def apply(suiteId: String, testName: String, caption: String, result: Result, throwable: Option[Throwable],
+            alerts: List[String], notes: List[String]): Step =
+    Step(id(suiteId, testName), caption, result, if (result == Failed) throwable.map(getStackTrace) else None, alerts, notes)
+
+  def id(suiteId: String, testName: String): String =
+    new String(DigestUtils.sha1Hex(s"$suiteId$testName"))
+
+  private def getStackTrace(th: Throwable): String = {
+    val out = new ByteArrayOutputStream()
+    th.printStackTrace(new PrintStream(out))
+    new String(out.toByteArray)
+  }
 }
 
 sealed trait Result

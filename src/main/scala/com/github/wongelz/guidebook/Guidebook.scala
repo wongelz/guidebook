@@ -31,11 +31,11 @@ trait Guidebook extends WordSpec
 
     val status = super.runTest(testName, args)
 
-    val stepId = StepId(suiteId, testName)
-    capture to s"${stepId.hash}.png"
+    val stepId = Step.id(suiteId, testName)
+    capture to s"$stepId.png"
     for (s <- screens.tail) {
       resizeViewport(s)
-      capture to s"${stepId.hash}${s.suffix}.png"
+      capture to s"$stepId${s.suffix}.png"
     }
     status
   }

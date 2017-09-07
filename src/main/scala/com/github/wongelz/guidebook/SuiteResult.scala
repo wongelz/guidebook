@@ -35,16 +35,16 @@ object SuiteResult {
     case ScopeClosed(_, _, _, _, _, _, _, _) :: es =>
       getJourneys(es, scope.tail, alerts, notes, accum)
     case TestSucceeded(_, _, suiteId, _, testName, testText, _, _, formatter, _, _, _, _, _) :: es =>
-      val step = Step(StepId(suiteId, testName), getCaption(formatter, testText), Result.Passed, None, None, alerts, notes)
+      val step = Step(suiteId, testName, getCaption(formatter, testText), Result.Passed, None, alerts, notes)
       getJourneys(es, scope, Nil, Nil, addStep(step, scope, accum))
-    case TestFailed(_, message, _, suiteId, _, testName, testText, _, throwable, _, formatter, _, _, _, _, _) :: es =>
-      val step = Step(StepId(suiteId, testName), getCaption(formatter, testText), Result.Failed, Some(message), throwable, alerts, notes)
+    case TestFailed(_, _, _, suiteId, _, testName, testText, _, throwable, _, formatter, _, _, _, _, _) :: es =>
+      val step = Step(suiteId, testName, getCaption(formatter, testText), Result.Failed, throwable, alerts, notes)
       getJourneys(es, scope, Nil, Nil, addStep(step, scope, accum))
-    case TestCanceled(_, message, _, suiteId, _, testName, testText, _, throwable, _, formatter, _, _, _, _, _) :: es =>
-      val step = Step(StepId(suiteId, testName), getCaption(formatter, testText), Result.Canceled, Some(message), throwable, alerts, notes)
+    case TestCanceled(_, _, _, suiteId, _, testName, testText, _, throwable, _, formatter, _, _, _, _, _) :: es =>
+      val step = Step(suiteId, testName, getCaption(formatter, testText), Result.Canceled, throwable, alerts, notes)
       getJourneys(es, scope, Nil, Nil, addStep(step, scope, accum))
     case TestIgnored(_, _, suiteId, _, testName, testText, formatter, _, _, _, _) :: es =>
-      val step = Step(StepId(suiteId, testName), getCaption(formatter, testText), Result.Ignored, None, None, alerts, notes)
+      val step = Step(suiteId, testName, getCaption(formatter, testText), Result.Ignored, None, alerts, notes)
       getJourneys(es, scope, Nil, Nil, addStep(step, scope, accum))
     case AlertProvided(_, message, _, _, _, _, _, _, _) :: es =>
       getJourneys(es, scope, message :: alerts, notes, accum)

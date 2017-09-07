@@ -1,8 +1,11 @@
 package com.github.wongelz.guidebook
 
-import java.io.{ByteArrayOutputStream, PrintStream}
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+
+import io.circe.Encoder
+import io.circe.generic.auto._
+import io.circe.syntax._
 
 import scalatags.Text.all._
 import scalatags.Text.tags2
@@ -10,6 +13,8 @@ import scalatags.Text.tags2
 object ReportCreator {
 
   private val dateFormat = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss z yyyy")
+
+  implicit def resultEncoder: Encoder[Result] = Encoder[String].contramap(_.toString)
 
   def create(results: SuiteResultHolder, screen: Screen): Frag = {
     val journeys = results.journeys
@@ -73,26 +78,29 @@ object ReportCreator {
               span(aria.hidden := "true")(raw("&times;"))
             )
           ),
-          div(id := "modal-body-screenshot", cls := "modal-body hidden")(
+          div(cls := "modal-body")(
             figure(cls := "thumbnail")(
-              a(target := "_blank")(
-                img(cls := "img-fluid img-thumbnail")
+              div(id := "modal-body-screenshot", cls := "hidden")(
+                a(target := "_blank")(
+                  img(cls := "img-fluid img-thumbnail")
+                )
               ),
-              figcaption(cls := "figure-caption")
+              div(id := "modal-body-stacktrace", cls := "hidden")(
+                pre(
+                  code(
+                  )
+                )
+              ),
+              figcaption(cls := "figure-caption"),
+              div(
+                span(cls := "badge"),
+                a(cls := "btn btn-sm btn-link guidebook-modal-toggle", href := "#")("[Show stacktrace]")
+              )
             )
           ),
-          div(id := "modal-body-cause", cls := "modal-body hidden")(
-            pre(
-              code(
-              )
-            ),
-          ),
-          div(id := "modal-body-message", cls := "modal-body hidden")(
-
-          ),
-          div(cls := "modal-footer hidden")(
+          div(cls := "modal-footer")(
             tags2.nav(
-              ul(cls := "pagination pagination-sm justify-content-center")
+              ul(cls := "pagination pagination-sm")
             )
           )
         )
@@ -140,11 +148,13 @@ object ReportCreator {
           figure(cls := "thumbnail")(
             s.result match {
               case Result.Passed =>
-                a(cls := "screenshot", href := s.screenshot(screen), data("toggle") := "modal", data("target") := "#modal", data("step") := s.id.hash, data("journey") := journey.description, title := s.caption)(
+                a(cls := "guidebook-step", href := s.screenshot(screen), title := s.caption, data("toggle") := "modal", data("target") := "#modal",
+                  data("guidebook-step") := s.asJson.noSpaces, data("journey") := journey.description)(
                   img(cls := "figure-img img-fluid img-thumbnail bg-success", src := s.screenshot(screen))
                 )
               case Result.Failed =>
-                a(cls := "screenshot", href := s.screenshot(screen), data("toggle") := "modal", data("target") := "#modal", data("step") := s.id.hash, data("journey") := journey.description, title := s.caption)(
+                a(cls := "guidebook-step", href := s.screenshot(screen), title := s.caption, data("toggle") := "modal", data("target") := "#modal",
+                  data("guidebook-step") := s.asJson.noSpaces, data("journey") := journey.description)(
                   img(cls := "figure-img img-fluid img-thumbnail bg-danger", src := s.screenshot(screen))
                 )
               case Result.Canceled =>
@@ -154,7 +164,9 @@ object ReportCreator {
             },
             figcaption(cls := "figure-caption")(
               s.caption,
-              getStackTraceLink(s) ++ getAlertLinks(s) ++ getNoteLinks(s)
+              getStackTraceLink(s),
+              getAlertLinks(s),
+              getNoteLinks(s)
             )
           )
         )
@@ -162,8 +174,8 @@ object ReportCreator {
     )
 
   private def getAlertLinks(s: Step): List[Frag] = {
-    s.alerts.map { note =>
-      a(cls := "info text-warning", href := "#", title := s.caption + " - alert", data("toggle") := "modal", data("target") := "#modal", data("info") := note)(
+    s.alerts.map { alert =>
+      a(cls := "guidebook-info text-warning", href := "#", title := "Alert", data("toggle") := "popover", data("trigger") := "hover", data("content") := alert, data("placement") := "top")(
         i(cls := "fa fa-exclamation-triangle", aria.hidden := "true")
       )
     }
@@ -171,27 +183,18 @@ object ReportCreator {
 
   private def getNoteLinks(s: Step): List[Frag] = {
     s.notes.map { note =>
-      a(cls := "info text-info", href := "#", title := s.caption + " - note", data("toggle") := "modal", data("target") := "#modal", data("info") :=  note)(
+      a(cls := "guidebook-info text-info", href := "#", title := "Note", data("toggle") := "popover", data("trigger") := "hover", data("content") := note, data("placement") := "top")(
         i(cls := "fa fa-info-circle", aria.hidden := "true")
       )
     }
   }
 
-  private def getStackTraceLink(s: Step): List[Frag] = {
-    s.throwable match {
-      case Some(th) if s.result == Result.Failed =>
-        List(
-          a(cls := "cause text-danger", href := "#", alt := s.caption + " - failed", data("toggle") := "modal", data("target") := "#modal", data("cause") := getStackTrace(th))(
-            i(cls := "fa fa-question-circle", aria.hidden := "true")
-          )
-        )
-      case _ => Nil
+  private def getStackTraceLink(s: Step): Option[Frag] = {
+    s.stacktrace map { _ =>
+      a(cls := "guidebook-stacktrace text-danger", href := "#", title := "Stacktrace", data("toggle") := "modal", data("target") := "#modal", data("guidebook-target") := s.id)(
+        i(cls := "fa fa-question-circle", aria.hidden := "true")
+      )
     }
   }
 
-  private def getStackTrace(th: Throwable): String = {
-    val out = new ByteArrayOutputStream()
-    th.printStackTrace(new PrintStream(out))
-    new String(out.toByteArray)
-  }
 }

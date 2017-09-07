@@ -1,30 +1,38 @@
-#modal-body-cause pre {
-    max-height: calc(100vh - 200px);
+#modal-body-stacktrace pre {
+    max-height: calc(100vh - 250px);
     overflow-y: auto;
     background-color: #000;
+    text-align: left;
+    margin-bottom: 0;
 }
 
-#modal-body-cause pre code {
+#modal-body-stacktrace pre code {
     font-size: 80%;
     color: #bbbbbb;
 }
 
-#modal-body-screenshot {
+.modal-body {
     text-align: center;
+    padding-top: 0;
 }
 
 #modal-body-screenshot img {
-    max-height: calc(100vh - 200px);
+    max-height: calc(100vh - 250px);
+}
+
+.modal-body .btn-link {
+    padding-top: 0;
+    padding-bottom: 0;
 }
 
 .hidden {
     display: none;
 }
 
-a.info {
+a.guidebook-info {
     padding-left: 2px;
 }
 
-a.cause {
+a.guidebook-stacktrace {
     padding-left: 2px;
 }
