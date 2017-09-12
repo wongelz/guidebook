@@ -47,14 +47,14 @@ lazy val library: Project = (project in file("library"))
       val mappings: scala.Seq[(File, String)] = files pair rebase((crossTarget in(client, Compile)).value, ((resourceManaged in  Compile).value / "assets/").getAbsolutePath )
       val map: scala.Seq[(sbt.File, sbt.File)] = mappings.map { case (s, t) => (s, file(t))}
       IO.copy(map).toSeq
-    },
-
-    publishMavenStyle := true,
-    publishTo := Some("bintray-wongelz-guidebook" at "https://api.bintray.com/maven/wongelz/guidebook/guidebook/"),
-    credentials += Credentials(Path.userHome / ".bintray" / ".credentials")
+    }
   )
 
 lazy val root = (project in file("."))
   .settings(commonSettings: _*)
   .settings(publishArtifact := false)
   .aggregate(library)
+
+publishMavenStyle in ThisBuild := true
+publishTo in ThisBuild := Some("bintray-wongelz-guidebook" at "https://api.bintray.com/maven/wongelz/guidebook/guidebook/")
+credentials in ThisBuild += Credentials(Path.userHome / ".bintray" / ".credentials")
