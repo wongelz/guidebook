@@ -13,6 +13,7 @@ lazy val client: Project = (project in file("client"))
   .settings(commonSettings)
   .settings(
     name := "client",
+    publishArtifact := false,
     publishLocal := {},
     publish := {},
     libraryDependencies ++= Seq(
@@ -52,3 +53,8 @@ lazy val library: Project = (project in file("library"))
     publishTo := Some("bintray-wongelz-guidebook" at "https://api.bintray.com/maven/wongelz/guidebook/guidebook/"),
     credentials += Credentials(Path.userHome / ".bintray" / ".credentials")
   )
+
+lazy val root = (project in file("."))
+  .settings(commonSettings: _*)
+  .settings(publishArtifact := false)
+  .aggregate(library)
