@@ -29,10 +29,12 @@
     display: none;
 }
 
-a.guidebook-info {
+button.guidebook-info {
     padding-left: 2px;
+    padding-right: 0;
 }
 
-a.guidebook-stacktrace {
+button.guidebook-stacktrace {
     padding-left: 2px;
+    padding-right: 0;
 }

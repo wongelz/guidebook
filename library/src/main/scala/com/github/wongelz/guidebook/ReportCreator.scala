@@ -26,7 +26,7 @@ object ReportCreator {
         meta(httpEquiv := "Content-Type", content := "text/html; charset=utf-8"),
         meta(httpEquiv := "Expires", content := "-1"),
         meta(httpEquiv := "Pragma", content := "no-cache"),
-        link(rel := "stylesheet", href := "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"),
+        link(rel := "stylesheet", href := "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css"),
         link(rel := "stylesheet", href := "https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"),
         link(rel := "stylesheet", href := "app.css")
       ),
@@ -41,8 +41,8 @@ object ReportCreator {
               )
             }
           ),
-          div(cls := (if (passed) "card mb-3 card-inverse card-success" else "card mb-3 card-inverse card-danger"))(
-            div(cls := "card-block")(
+          div(cls := (if (passed) "card mb-3 text-white bg-success" else "card mb-3 text-white bg-danger"))(
+            div(cls := "card-body")(
               h4(cls := "card-title")(if (passed) "Summary - Passed" else "Summary - FAILED!!!"),
               blockquote(cls := "card-blockquote")(
                 p(s"Time: ${dateFormat.format(results.started.atZone(ZoneId.systemDefault()))}"),
@@ -173,7 +173,7 @@ object ReportCreator {
 
   private def getAlertLinks(s: Step): List[Frag] = {
     s.alerts.map { alert =>
-      a(cls := "guidebook-info text-warning", href := "#", title := "Alert", data("toggle") := "popover", data("trigger") := "hover", data("content") := alert, data("placement") := "top")(
+      button(cls := "btn btn-link guidebook-info text-warning", title := "Alert", data("toggle") := "popover", data("trigger") := "hover", data("content") := alert, data("placement") := "top")(
         i(cls := "fa fa-exclamation-triangle", aria.hidden := "true")
       )
     }
@@ -181,7 +181,7 @@ object ReportCreator {
 
   private def getNoteLinks(s: Step): List[Frag] = {
     s.notes.map { note =>
-      a(cls := "guidebook-info text-info", href := "#", title := "Note", data("toggle") := "popover", data("trigger") := "hover", data("content") := note, data("placement") := "top")(
+      button(cls := "btn btn-link guidebook-info text-info", title := "Note", data("toggle") := "popover", data("trigger") := "hover", data("content") := note, data("placement") := "top")(
         i(cls := "fa fa-info-circle", aria.hidden := "true")
       )
     }
@@ -189,7 +189,7 @@ object ReportCreator {
 
   private def getStackTraceLink(s: Step): Option[Frag] = {
     s.stacktrace map { _ =>
-      a(cls := "guidebook-stacktrace text-danger", href := "#", title := "Stacktrace", data("toggle") := "modal", data("target") := "#modal", data("guidebook-target") := s.id)(
+      button(cls := "btn btn-link guidebook-stacktrace text-danger", title := "Stacktrace", data("toggle") := "modal", data("target") := "#modal", data("guidebook-target") := s.id)(
         i(cls := "fa fa-question-circle", aria.hidden := "true")
       )
     }

@@ -22,8 +22,8 @@ lazy val client: Project = (project in file("client"))
     skip in packageJSDependencies := false,
     jsDependencies ++= Seq(
       "org.webjars"     % "jquery"    % "2.1.4"       / "jquery.js" minified "jquery.min.js",
-      "org.webjars"     % "bootstrap" % "4.0.0-beta"  / "js/bootstrap.js" minified "js/bootstrap.min.js",
-      "org.webjars.npm" % "popper.js" % "1.12.5"      / "dist/umd/popper.js" minified "dist/umd/popper.min.js"
+      "org.webjars.npm" % "popper.js" % "1.12.5"      / "dist/umd/popper.js" minified "dist/umd/popper.min.js",
+      "org.webjars"     % "bootstrap" % "4.0.0-beta"  / "js/bootstrap.js" minified "js/bootstrap.min.js" dependsOn "dist/umd/popper.js"
     ),
     scalaJSUseMainModuleInitializer := true,
     mainClass in Compile := Some("com.github.wongelz.guidebook.client.ClientMain")

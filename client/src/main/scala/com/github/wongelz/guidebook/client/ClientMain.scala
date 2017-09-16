@@ -88,12 +88,16 @@ class GuidebookModal(modal: JQuery, steps: Steps) {
   })
 
   private def showAlerts(step: Step) = {
-    def popover(icon: String): JQuery = {
-      $("<a/>")
+    def popover(icon: String, textColor: String, title: String, content: String): JQuery = {
+      $("<button/>")
+        .addClass("btn-link")
         .addClass("guidebook-info")
-        .attr("href", "#")
-        .data("trigger", "hover")
-        .data("placement", "top")
+        .addClass(textColor)
+        .attr("title", title)
+        .attr("data-toggle", "popover")
+        .attr("data-trigger", "hover")
+        .attr("data-placement", "top")
+        .attr("data-content", content)
         .append($("<i/>")
           .addClass("fa")
           .addClass(icon))
@@ -101,16 +105,10 @@ class GuidebookModal(modal: JQuery, steps: Steps) {
     }
 
     step.alerts foreach { a =>
-      caption.append(popover("fa-exclamation-triangle")
-        .addClass("text-warning")
-        .attr("title", "Alert")
-        .data("content", a))
+      caption.append(popover("fa-exclamation-triangle", "text-warning", "Alert", a))
     }
     step.notes foreach { n =>
-      caption.append(popover("fa-info-circle")
-        .addClass("text-info")
-        .attr("title", "Note")
-        .data("content", n))
+      caption.append(popover("fa-info-circle", "text-info", "Note", n))
     }
   }
 
