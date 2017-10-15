@@ -32,9 +32,11 @@
 button.guidebook-info {
     padding-left: 2px;
     padding-right: 0;
+    cursor: pointer;
 }
 
 button.guidebook-stacktrace {
     padding-left: 2px;
     padding-right: 0;
+    cursor: pointer;
 }

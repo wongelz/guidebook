@@ -12,8 +12,11 @@ class SuiteResultHolder {
     suiteList += result
   }
 
-  def journeys: List[Journey] =
-    suiteList.toList.flatMap(_.journeys)
+  def browsers: List[String] =
+    suiteList.flatMap(_.browsers).toList.distinct.sorted
+
+  def browserResults(browserName: String): List[BrowserSuiteResult] =
+    suiteList.toList.flatMap(_.getJourneys(browserName))
 
   def totalDuration: Duration =
     Duration.ofMillis(suiteList.map(s => s.duration.getOrElse(0L)).sum)

@@ -1,6 +1,6 @@
 package com.github.wongelz.guidebook
 
-import java.time.ZoneId
+import java.time.{Duration, ZoneId}
 import java.time.format.DateTimeFormatter
 
 import io.circe.Encoder
@@ -9,6 +9,7 @@ import io.circe.syntax._
 
 import scalatags.Text.all._
 import scalatags.Text.tags2
+import scalatags.Text.tags2.nav
 
 object ReportCreator {
 
@@ -16,13 +17,19 @@ object ReportCreator {
 
   implicit def resultEncoder: Encoder[Result] = Encoder[String].contramap(_.toString)
 
-  def create(results: SuiteResultHolder, screen: Screen): Frag = {
-    val journeys = results.journeys
+  /**
+    * Create report contents for one browser/screen.
+    * TODO highlight current report in nav
+    */
+  def create(results: SuiteResultHolder, browserName: String, screen: Screen, guidebookNav: GuidebookNav): Frag = {
+    val browserResults = results.browserResults(browserName)
+    val journeys = browserResults.flatMap(_.journeys)
     val passed = journeys.forall(_.passed)
+    val duration = Duration.ofMillis(browserResults.map(_.duration).sum)
 
     html(
       head(
-        scalatags.Text.tags2.title("Guidebook"),
+        scalatags.Text.tags2.title(s"Guidebook - $browserName"),
         meta(httpEquiv := "Content-Type", content := "text/html; charset=utf-8"),
         meta(httpEquiv := "Expires", content := "-1"),
         meta(httpEquiv := "Pragma", content := "no-cache"),
@@ -32,31 +39,48 @@ object ReportCreator {
       ),
       body(
         div(cls := "container-fluid")(
-          ul(cls := "nav justify-content-end")(
-            Screens.All.map { s =>
-              li(cls := "nav-item")(
-                a(cls := "nav-link btn btn-default", href := s"index${s.suffix}.html", title := s.description)(
-                  i(cls := s"fa fa-sm ${s.icon}")
+          nav(cls := "navbar navbar-expand-lg navbar-light bg-light justify-content-between")(
+            ul(cls := "nav nav-pills")(
+              guidebookNav.browsers.map { b =>
+                li(cls := "nav-item")(
+                  a(cls := (if (b == browserName) "nav-link active" else "nav-link"), href := guidebookNav.location(b, screen), title := b)(
+                    i(cls := s"fa fa-sm fa-${b.toLowerCase}")
+                  )
                 )
-              )
-            }
+              }
+            ),
+            ul(cls := "nav nav-pills")(
+              guidebookNav.screens.map { s =>
+                li(cls := "nav-item")(
+                  a(cls := (if (s == screen) "nav-link active" else "nav-link"), href := guidebookNav.location(browserName, s), title := s.description)(
+                    i(cls := s"fa fa-sm ${s.icon}")
+                  )
+                )
+              }
+            )
           ),
           div(cls := (if (passed) "card mb-3 text-white bg-success" else "card mb-3 text-white bg-danger"))(
             div(cls := "card-body")(
               h4(cls := "card-title")(if (passed) "Summary - Passed" else "Summary - FAILED!!!"),
               blockquote(cls := "card-blockquote")(
-                p(s"Time: ${dateFormat.format(results.started.atZone(ZoneId.systemDefault()))}"),
-                p(s"Duration: ${results.totalDuration.toMinutes} minutes ${results.totalDuration.getSeconds % 60} seconds"),
+                p(s"Browser: $browserName"),
+                p(s"Time: ${dateFormat.format(browserResults.map(_.timestamp).min.atZone(ZoneId.systemDefault()))}"),
+                p(s"Duration: ${duration.toMinutes} minutes ${duration.getSeconds % 60} seconds"),
                 p(s"Journeys completed: ${journeys.count(_.passed)} of ${journeys.length}"),
                 p(s"Steps completed: ${journeys.foldLeft(0)(_ + _.passedStepCount)} of ${journeys.foldLeft(0)(_ + _.stepCount)}")
               )
             )
           ),
           results.suiteList.map { r =>
-            Seq[Frag](
-              h3(r.suiteName),
-              getJourneysHtml(r.journeys, Nil, screen)
-            )
+            r.getJourneys(browserName) match {
+              case Some(bj) =>
+                Seq[Frag](
+                  h3(r.suiteName),
+                  getJourneysHtml(bj.journeys, Nil, screen)
+                )
+              case None =>
+                Seq.empty
+            }
           },
           modal
         ),
@@ -120,6 +144,13 @@ object ReportCreator {
           case (s :: s1, _) =>
             div(cls := "row")(
               h4(cls := "col-sm-12")(s1.reverse.mkString(" ")),
+              h5(cls := "col-sm-12")(
+                s,
+                getResultBadge(j)
+              )
+            )
+          case (s, _) =>
+            div(cls := "row")(
               h5(cls := "col-sm-12")(
                 s,
                 getResultBadge(j)
