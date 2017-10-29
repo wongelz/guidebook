@@ -6,13 +6,13 @@ import Path.rebase
 
 lazy val commonSettings: Seq[Setting[_]] = Seq(
   organization := "com.github.wongelz",
+  name := "guidebook",
   scalaVersion := "2.12.3"
 )
 
 lazy val client: Project = (project in file("client"))
   .settings(commonSettings)
   .settings(
-    name := "client",
     publishArtifact := false,
     publishLocal := {},
     publish := {},
@@ -33,10 +33,9 @@ lazy val client: Project = (project in file("client"))
 lazy val library: Project = (project in file("library"))
   .settings(commonSettings)
   .settings(
-    name := "guidebook",
     libraryDependencies ++= Seq(
       "org.scalatest"           %% "scalatest"                % "3.0.1",
-      "org.seleniumhq.selenium" % "selenium-java"             % "3.0.1",
+      "org.seleniumhq.selenium" %  "selenium-java"            % "3.6.0",
       "com.lihaoyi"             %% "scalatags"                % "0.6.5",
       "io.circe"                %% "circe-core"               % "0.8.0",
       "io.circe"                %% "circe-generic"            % "0.8.0"

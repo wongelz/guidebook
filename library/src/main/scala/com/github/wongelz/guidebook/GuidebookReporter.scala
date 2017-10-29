@@ -119,8 +119,12 @@ class GuidebookReporter extends ResourcefulReporter {
   }
 
   def dispose(): Unit = {
-    for (s <- Screens.All) {
-      makeIndexFile(ReportCreator.create(results, s), s)
+    val browsers = results.browsers
+    val nav = GuidebookNav(browsers, Screens.All)
+    for (s <- Screens.All; b <- browsers) {
+      val contents = ReportCreator.create(results, b, s, nav)
+      val location = nav.location(b, s)
+      makeIndexFile(contents, location)
     }
   }
 
@@ -128,9 +132,9 @@ class GuidebookReporter extends ResourcefulReporter {
     // TODO
   }
 
-  private def makeIndexFile(contents: Frag, screen: Screen): Unit = {
+  private def makeIndexFile(contents: Frag, location: String): Unit = {
     val pw = new PrintWriter(new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(
-      new File(targetDir, s"index${screen.suffix}.html")), 4096), "UTF-8"))
+      new File(targetDir, location)), 4096), "UTF-8"))
     try {
       pw.println {
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
@@ -153,13 +157,11 @@ object GuidebookReporter {
       val outputStream = new FileOutputStream(new File(toDir, targetFileName))
       try {
         outputStream getChannel() transferFrom(Channels.newChannel(inputStream), 0, Long.MaxValue)
-      }
-      finally {
+      } finally {
         outputStream.flush()
         outputStream.close()
       }
-    }
-    finally {
+    } finally {
       inputStream.close()
     }
   }
