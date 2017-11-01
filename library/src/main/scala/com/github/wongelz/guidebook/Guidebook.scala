@@ -3,7 +3,7 @@ package com.github.wongelz.guidebook
 import java.util
 
 import com.github.wongelz.guidebook.selenium.WebBrowserExtras
-import org.openqa.selenium.WebDriver
+import org.openqa.selenium.{WebDriver, WebDriverException}
 import org.scalatest._
 import org.scalatest.concurrent.Eventually
 import org.scalatest.selenium.WebBrowser
@@ -63,6 +63,21 @@ trait Guidebook extends WordSpec
     */
   def usingBrowser(browser: Browser)(tests: => Unit): Unit =
     usingBrowsers(browser)(tests)
+
+  /**
+    * Registers suites/tests to run using all detected browsers.
+    *
+    * eg.
+    * detectBrowsers {
+    *    ...
+    * }
+    */
+  def detectBrowsers(tests: => Unit): Unit = {
+    Browsers.Detectable.toList.filter(_.isPresent()) match {
+      case b :: bs => usingBrowsers(b, bs:_*)(tests)
+      case Nil => throw new WebDriverException("Unable to detect any browsers")
+    }
+  }
 
   abstract override def withFixture(test: NoArgTest): Outcome = {
     browsers.find(b => test.name.startsWith(s"Using ${b.name}:")) match {
