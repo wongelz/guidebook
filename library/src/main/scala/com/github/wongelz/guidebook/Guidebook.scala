@@ -54,6 +54,23 @@ trait Guidebook extends WordSpec
   }
 
   /**
+    * Registers suites/tests to run using one or more browsers, providing to access the browser name.
+    *
+    * eg.
+    * foreachBrowser(Chrome, Firefox) { browser =>
+    *    ...
+    * }
+    */
+  def foreachBrowser(browser: Browser, browsers: Browser*)(tests: String => Unit): Unit = {
+    this.browsers = browser :: browsers.toList
+    for (browser <- this.browsers) {
+      s"Using ${browser.name}: " when {
+        tests(browser.name)
+      }
+    }
+  }
+
+  /**
     * Registers suites/tests to run using a given browser.
     *
     * eg.
@@ -68,13 +85,28 @@ trait Guidebook extends WordSpec
     * Registers suites/tests to run using all detected browsers.
     *
     * eg.
-    * detectBrowsers {
+    * usingDetectedBrowsers { browser =>
     *    ...
     * }
     */
-  def detectBrowsers(tests: => Unit): Unit = {
+  def usingDetectedBrowsers(tests: => Unit): Unit = {
     Browsers.Detectable.toList.filter(_.isPresent()) match {
       case b :: bs => usingBrowsers(b, bs:_*)(tests)
+      case Nil => throw new WebDriverException("Unable to detect any browsers")
+    }
+  }
+
+  /**
+    * Registers suites/tests to run using all detected browsers, providing access to the browser name.
+    *
+    * eg.
+    * foreachDetectedBrowser { browser =>
+    *    ...
+    * }
+    */
+  def foreachDetectedBrowser(tests: String => Unit): Unit = {
+    Browsers.Detectable.toList.filter(_.isPresent()) match {
+      case b :: bs => foreachBrowser(b, bs:_*)(tests)
       case Nil => throw new WebDriverException("Unable to detect any browsers")
     }
   }
