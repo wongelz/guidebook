@@ -50,10 +50,10 @@ object ReportCreator {
               }
             ),
             ul(cls := "nav nav-pills")(
-              guidebookNav.screens.map { s =>
+              guidebookNav.screens.toList.map { s =>
                 li(cls := "nav-item")(
-                  a(cls := (if (s == screen) "nav-link active" else "nav-link"), href := guidebookNav.location(browserName, s), title := s.description)(
-                    i(cls := s"fa fa-sm ${s.icon}")
+                  a(cls := (if (s == screen) "nav-link active" else "nav-link"), href := guidebookNav.location(browserName, s), title := s"${s.width} x ${s.height}")(
+                    i(cls := (if (s == guidebookNav.screens.default) s"fa fa-sm fa-desktop" else "fa fa-sm fa-mobile"))
                   )
                 )
               }

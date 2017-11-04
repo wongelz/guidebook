@@ -28,9 +28,8 @@ case class Step(
     alerts: List[String],
     notes: List[String]) {
 
-  lazy val screenshot = s"screenshots/$id.png"
-
-  def screenshot(screen: Screen) = s"screenshots/$id${screen.suffix}.png"
+  def screenshot(screen: Screen): String =
+    s"screenshots/${Step.screenshotFilename(id, screen)}"
 }
 
 object Step {
@@ -41,6 +40,8 @@ object Step {
 
   def id(suiteId: String, testName: String): String =
     new String(DigestUtils.sha1Hex(s"$suiteId$testName"))
+
+  def screenshotFilename(id: String, screen: Screen) = s"$id-${screen.width}x${screen.height}.png"
 
   private def getStackTrace(th: Throwable): String = {
     val out = new ByteArrayOutputStream()

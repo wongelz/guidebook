@@ -136,16 +136,17 @@ trait Guidebook extends WordSpec
       implicitlyWait(Span(0, Seconds))
       setCaptureDir("target/guidebook/screenshots")
       webDriver.manage().window().setPosition(new org.openqa.selenium.Point(0, 0))
-      val screens = Screens.All
-      resizeViewport(screens.head)
+
+      val screens = Screens.fromConfig(test.configMap)
+      resizeViewport(screens.default)
 
       val outcome = super.withFixture(test)
 
       val stepId = Step.id(suiteId, test.name)
-      capture to s"$stepId.png"
-      for (s <- screens.tail) {
+      capture to Step.screenshotFilename(stepId, screens.default)
+      for (s <- screens.additionalScreenshots) {
         resizeViewport(s)
-        capture to s"$stepId${s.suffix}.png"
+        capture to Step.screenshotFilename(stepId, s)
       }
 
       outcome match {

@@ -26,6 +26,7 @@ class GuidebookReporter extends ResourcefulReporter {
   private var eventList = new ListBuffer[Event]()
   private var runEndEvent: Option[Event] = None
   private val results = new SuiteResultHolder()
+  private var screens: Screens = _
 
   def apply(event: Event): Unit = {
     event match {
@@ -33,6 +34,7 @@ class GuidebookReporter extends ResourcefulReporter {
       case _: DiscoveryCompleted =>
 
       case RunStarting(ordinal, testCount, configMap, formatter, location, payload, threadName, timeStamp) =>
+        screens = Screens.fromConfig(configMap)
 
       case RunCompleted(ordinal, duration, summary, formatter, location, payload, threadName, timeStamp) =>
         runEndEvent = Some(event)
@@ -120,8 +122,8 @@ class GuidebookReporter extends ResourcefulReporter {
 
   def dispose(): Unit = {
     val browsers = results.browsers
-    val nav = GuidebookNav(browsers, Screens.All)
-    for (s <- Screens.All; b <- browsers) {
+    val nav = GuidebookNav(browsers, screens)
+    for (s <- screens.toList; b <- browsers) {
       val contents = ReportCreator.create(results, b, s, nav)
       val location = nav.location(b, s)
       makeIndexFile(contents, location)
