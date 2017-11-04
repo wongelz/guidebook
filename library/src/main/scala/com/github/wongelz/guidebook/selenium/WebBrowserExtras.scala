@@ -31,9 +31,9 @@ trait SemanticQueries { this: WebBrowser =>
     *
     * This method enables syntax such as the following:
     *
-    * textField(labelledAs("???")) value_= "???"
+    * textField(forLabel("???")) value_= "???"
     */
-  def labelledAs(text: String)(implicit webDriver: WebDriver): Query = {
+  def forLabel(text: String)(implicit webDriver: WebDriver): Query = {
     labelText(text).findElement match {
       case None => throw new NoSuchElementException(s"Cannot locate label with text: $text")
       case Some(label) =>
@@ -43,6 +43,18 @@ trait SemanticQueries { this: WebBrowser =>
         }
     }
   }
+
+  /**
+    * Query for form element with the given label text.
+    *
+    * Same as forLabel
+    *
+    * This method enables syntax such as the following:
+    *
+    * textField(labelledAs("???")) value_= "???"
+    */
+  def labelledAs(text: String)(implicit webDriver: WebDriver): Query =
+    forLabel(text)
 }
 
 trait AriaQueries { this: WebBrowser =>
@@ -66,6 +78,9 @@ trait EnhancedElements { this: WebBrowser =>
   }
 }
 
-trait WebBrowserExtras extends SemanticQueries with AriaQueries with EnhancedElements { this: WebBrowser =>
+trait WebBrowserExtras
+  extends SemanticQueries
+  with AriaQueries
+  with EnhancedElements { this: WebBrowser =>
 
 }
