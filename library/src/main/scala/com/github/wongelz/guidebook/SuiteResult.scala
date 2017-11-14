@@ -77,7 +77,7 @@ object SuiteResult {
   @tailrec
   private def getJourneys(events: List[Event], scope: List[String], alerts: List[String], notes: List[String], accum: List[Journey]): List[Journey] = {
     events match {
-      case Nil => accum
+      case Nil => accum.reverse
       case ScopeOpened(_, s, _, formatter, _, _, _, _) :: es =>
         getJourneys(es, getCaption(formatter, s, scope) :: scope, alerts, notes, accum)
       case ScopeClosed(_, _, _, _, _, _, _, _) :: es =>
