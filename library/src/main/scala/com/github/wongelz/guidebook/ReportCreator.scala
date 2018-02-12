@@ -84,8 +84,8 @@ object ReportCreator {
           },
           modal
         ),
-        script(src := "client-jsdeps.min.js"),
-        script(src := "client-opt.js")
+        script(src := "guidebook-jsdeps.min.js"),
+        script(src := "guidebook-opt.js")
       )
     )
   }

@@ -144,7 +144,7 @@ class GuidebookModal(modal: JQuery, steps: Steps) {
   private def showStacktrace(step: Step) = {
     showStep(step)
     stacktraceContent.find("code").empty()
-    stacktraceContent.find("code").html(step.stacktrace.getOrElse(""))
+    stacktraceContent.find("code").text(step.stacktrace.getOrElse(""))
 
     toggleLink.text("[Show screenshot]").show()
 

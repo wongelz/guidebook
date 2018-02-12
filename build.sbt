@@ -55,5 +55,5 @@ lazy val root = (project in file("."))
   .aggregate(library)
 
 publishMavenStyle in ThisBuild := true
-publishTo in ThisBuild := Some("bintray-wongelz-guidebook" at "https://api.bintray.com/maven/wongelz/guidebook/guidebook/;publish=1")
+publishTo in ThisBuild := Some("bintray-wongelz-guidebook" at "https://api.bintray.com/maven/wongelz/guidebook/guidebook/")
 credentials in ThisBuild += Credentials(Path.userHome / ".bintray" / ".credentials")
