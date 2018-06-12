@@ -34,11 +34,11 @@ lazy val library: Project = (project in file("library"))
   .settings(commonSettings)
   .settings(
     libraryDependencies ++= Seq(
-      "org.scalatest"           %% "scalatest"                % "3.0.1",
-      "org.seleniumhq.selenium" %  "selenium-java"            % "3.6.0",
-      "com.lihaoyi"             %% "scalatags"                % "0.6.5",
-      "io.circe"                %% "circe-core"               % "0.8.0",
-      "io.circe"                %% "circe-generic"            % "0.8.0"
+      "org.scalatest"           %% "scalatest"                % "3.0.5",
+      "org.seleniumhq.selenium" %  "selenium-java"            % "3.12.0",
+      "com.lihaoyi"             %% "scalatags"                % "0.6.7",
+      "io.circe"                %% "circe-core"               % "0.9.1",
+      "io.circe"                %% "circe-generic"            % "0.9.1"
     ),
     compile in Compile := ((compile in Compile) dependsOn (fullOptJS in(client, Compile))).value,
     resourceGenerators in Compile += Def.task {
