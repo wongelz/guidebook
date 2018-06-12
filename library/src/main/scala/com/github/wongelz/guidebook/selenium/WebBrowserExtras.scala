@@ -68,6 +68,17 @@ trait AriaQueries { this: WebBrowser =>
     */
   def ariaLabel(text: String): Query =
     xpath(s"//*[@aria-label='$text']")
+
+
+  /**
+    * Query for element(s) with the given aria-labelledby attribute
+    *
+    * This method enables syntax such as the following:
+    *
+    * click on ariaLabelledBy("???")
+    */
+  def ariaLabelledBy(text: String): Query =
+    xpath(s"//*[@aria-labelledby='$text']")
 }
 
 trait EnhancedElements { this: WebBrowser =>
