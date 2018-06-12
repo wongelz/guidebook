@@ -20,6 +20,8 @@ trait Guidebook extends WordSpec
   override implicit val patienceConfig: PatienceConfig =
     PatienceConfig(timeout = scaled(Span(3000, Millis)), interval = scaled(Span(100, Millis)))
 
+  def implicitWaitTimeout = Span(0, Seconds)
+
   private var browsers: List[Browser] = List.empty
   private var currentWebDriver: Option[WebDriver] = None
   private var currentBrowser: Option[Browser] = None
@@ -133,7 +135,7 @@ trait Guidebook extends WordSpec
     if (cancelRemaining) {
       Canceled("Canceled by Guidebook because a test failed previously")
     } else {
-      implicitlyWait(Span(0, Seconds))
+      implicitlyWait(implicitWaitTimeout)
       setCaptureDir("target/guidebook/screenshots")
       webDriver.manage().window().setPosition(new org.openqa.selenium.Point(0, 0))
 
