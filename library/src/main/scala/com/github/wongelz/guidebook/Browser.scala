@@ -3,9 +3,9 @@ package com.github.wongelz.guidebook
 import java.io.File
 
 import org.openqa.selenium.WebDriver
-import org.openqa.selenium.chrome.ChromeDriver
+import org.openqa.selenium.chrome.{ChromeDriver, ChromeOptions}
 import org.openqa.selenium.edge.EdgeDriver
-import org.openqa.selenium.firefox.FirefoxDriver
+import org.openqa.selenium.firefox.{FirefoxDriver, FirefoxOptions}
 import org.openqa.selenium.ie.InternetExplorerDriver
 import org.openqa.selenium.safari.SafariDriver
 
@@ -25,15 +25,23 @@ abstract class Browser(val name: String) {
   * Some default browsers, without any custom capabilities.
   */
 object Browsers {
-  object Firefox extends Browser("Firefox") with Detectable {
-    override def createWebDriver(): WebDriver = new FirefoxDriver()
+  final case class Firefox(headless: Boolean) extends Browser("Firefox") with Detectable {
+    override def createWebDriver(): WebDriver = {
+      val options = new FirefoxOptions()
+      options.setHeadless(headless)
+      new FirefoxDriver(options)
+    }
 
     override def isPresent(): Boolean =
       Option(System.getProperty("webdriver.gecko.driver")).exists(fileExists)
   }
 
-  object Chrome extends Browser("Chrome") with Detectable {
-    override def createWebDriver(): WebDriver = new ChromeDriver()
+  final case class Chrome(headless: Boolean) extends Browser("Chrome") with Detectable {
+    override def createWebDriver(): WebDriver = {
+      val options = new ChromeOptions
+      options.setHeadless(headless)
+      new ChromeDriver(options)
+    }
 
     override def isPresent(): Boolean =
       Option(System.getProperty("webdriver.chrome.driver")).exists(fileExists)
@@ -63,6 +71,6 @@ object Browsers {
   private def fileExists(pathname: String) =
     new File(pathname).exists()
 
-  val Detectable: Set[Detectable] = Set(Firefox, Chrome, InternetExplorer, Edge, Safari)
+  val Detectable: Set[Detectable] = Set(Firefox(headless = false), Chrome(headless = false), InternetExplorer, Edge, Safari)
 }
 
