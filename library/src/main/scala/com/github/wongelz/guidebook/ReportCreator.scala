@@ -71,7 +71,7 @@ object ReportCreator {
               )
             )
           ),
-          results.suiteList.map { r =>
+          results.suiteList.toList.map { r =>
             r.getJourneys(browserName) match {
               case Some(bj) =>
                 Seq[Frag](

@@ -158,7 +158,7 @@ object GuidebookReporter {
     try {
       val outputStream = new FileOutputStream(new File(toDir, targetFileName))
       try {
-        outputStream getChannel() transferFrom(Channels.newChannel(inputStream), 0, Long.MaxValue)
+        outputStream.getChannel().transferFrom(Channels.newChannel(inputStream), 0, Long.MaxValue)
       } finally {
         outputStream.flush()
         outputStream.close()

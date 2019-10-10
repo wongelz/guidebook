@@ -7,7 +7,7 @@ import Path.rebase
 lazy val commonSettings: Seq[Setting[_]] = Seq(
   organization := "com.github.wongelz",
   name := "guidebook",
-  scalaVersion := "2.12.8"
+  scalaVersion := "2.13.1"
 )
 
 lazy val client: Project = (project in file("client"))
@@ -37,8 +37,8 @@ lazy val library: Project = (project in file("library"))
       "org.scalatest"           %% "scalatest"                % "3.0.8",
       "org.seleniumhq.selenium" %  "selenium-java"            % "3.141.59",
       "com.lihaoyi"             %% "scalatags"                % "0.7.0",
-      "io.circe"                %% "circe-core"               % "0.11.1",
-      "io.circe"                %% "circe-generic"            % "0.11.1",
+      "io.circe"                %% "circe-core"               % "0.12.2",
+      "io.circe"                %% "circe-generic"            % "0.12.2",
       "commons-codec"           %  "commons-codec"            % "1.12"
     ),
     compile in Compile := ((compile in Compile) dependsOn (fullOptJS in(client, Compile))).value,
