@@ -145,7 +145,8 @@ trait Guidebook extends WordSpec
       val outcome = super.withFixture(test)
 
       val stepId = Step.id(suiteId, test.name)
-      capture to Step.screenshotFilename(stepId, screens.default)
+      val filename = Step.screenshotFilename(stepId, screens.default)
+      capture to filename
       for (s <- screens.additionalScreenshots) {
         resizeViewport(s)
         capture to Step.screenshotFilename(stepId, s)
@@ -153,6 +154,7 @@ trait Guidebook extends WordSpec
 
       outcome match {
         case failed: Failed =>
+          info(s"Screenshot: $filename")
           cancelRemaining = true
           failed
         case _ => outcome
