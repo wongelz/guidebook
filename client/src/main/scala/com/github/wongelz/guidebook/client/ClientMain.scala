@@ -7,7 +7,7 @@ import scala.scalajs.js
 import scala.scalajs.js.UndefOr
 
 object ClientMain {
-  def main(): Unit = {
+  def main(args: Array[String]): Unit = {
     val steps = new Steps($(".guidebook-step"))
     new GuidebookModal($("#modal"), steps)
 

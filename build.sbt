@@ -11,24 +11,21 @@ lazy val commonSettings: Seq[Setting[_]] = Seq(
 )
 
 lazy val client: Project = (project in file("client"))
+  .enablePlugins(ScalaJSPlugin, ScalaJSBundlerPlugin)
   .settings(commonSettings)
   .settings(
     publishArtifact := false,
     publishLocal := {},
     publish := {},
     libraryDependencies ++= Seq(
-      "be.doeraene" %%% "scalajs-jquery" % "0.9.6"
+      "be.doeraene" %%% "scalajs-jquery" % "1.0.0"
     ),
-    skip in packageJSDependencies := false,
-    jsDependencies ++= Seq(
-      "org.webjars"     % "jquery"    % "2.1.4"       / "jquery.js" minified "jquery.min.js",
-      "org.webjars.npm" % "popper.js" % "1.16.0"      / "dist/umd/popper.js" minified "dist/umd/popper.min.js",
-      "org.webjars"     % "bootstrap" % "4.4.1"       / "js/bootstrap.js" minified "js/bootstrap.min.js" dependsOn "dist/umd/popper.js"
-    ),
+    npmDependencies in Compile += "jquery" -> "2.1.4",
+    npmDependencies in Compile += "popper" -> "1.16.0",
+    npmDependencies in Compile += "bootstrap" -> "4.4.1",
     scalaJSUseMainModuleInitializer := true,
     mainClass in Compile := Some("com.github.wongelz.guidebook.client.ClientMain")
   )
-  .enablePlugins(ScalaJSPlugin)
 
 lazy val library: Project = (project in file("library"))
   .settings(commonSettings)
