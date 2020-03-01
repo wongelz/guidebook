@@ -13,7 +13,7 @@ trait SemanticQueries { this: WebBrowser =>
     * click on buttonText("???")
     */
   def buttonText(text: String): Query =
-    xpath(s"//button/text()[normalize-space(.)='$text']/parent::*")
+    xpath(s"//button[normalize-space(.)='$text']")
 
   /**
     * Query for label(s) with the given text.
@@ -24,7 +24,7 @@ trait SemanticQueries { this: WebBrowser =>
     * click on labelText("???")
     */
   def labelText(text: String): Query =
-    xpath(s"//label/text()[normalize-space(.)='$text']/parent::*")
+    xpath(s"//label[normalize-space(.)='$text']")
 
   /**
     * Query for form element with the given label text.
