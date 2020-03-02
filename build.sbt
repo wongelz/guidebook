@@ -31,7 +31,8 @@ lazy val library: Project = (project in file("library"))
   .settings(commonSettings)
   .settings(
     libraryDependencies ++= Seq(
-      "org.scalatest"           %% "scalatest"                % "3.0.8",
+      "org.scalatest"           %% "scalatest"                % "3.1.1",
+      "org.scalatestplus"       %% "selenium-2-45"            % "3.2.0.1-M1",
       "org.seleniumhq.selenium" %  "selenium-java"            % "3.141.59",
       "com.lihaoyi"             %% "scalatags"                % "0.8.4",
       "io.circe"                %% "circe-core"               % "0.12.3",

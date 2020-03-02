@@ -6,11 +6,11 @@ import com.github.wongelz.guidebook.selenium.WebBrowserExtras
 import org.openqa.selenium.{WebDriver, WebDriverException}
 import org.scalatest._
 import org.scalatest.concurrent.Eventually
-import org.scalatest.selenium.WebBrowser
 import org.scalatest.time.{Millis, Seconds, Span}
+import org.scalatestplus.selenium.WebBrowser
 
-trait Guidebook extends WordSpec
-  with MustMatchers
+trait Guidebook extends wordspec.AnyWordSpec
+  with matchers.must.Matchers
   with Eventually
   with TestSuiteMixin
   with WebBrowser

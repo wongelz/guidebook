@@ -85,7 +85,7 @@ object SuiteResult {
       case TestSucceeded(_, _, suiteId, _, testName, testText, _, _, formatter, _, _, _, _, _) :: es =>
         val step = Step(suiteId, testName, getCaption(formatter, testText, scope), Result.Passed, None, alerts, notes)
         getJourneys(es, scope, Nil, Nil, addStep(step, scope, accum))
-      case TestFailed(_, _, _, suiteId, _, testName, testText, _, throwable, _, formatter, _, _, _, _, _) :: es =>
+      case TestFailed(_, _, _, suiteId, _, testName, testText, _, _, throwable, _, formatter, _, _, _, _, _) :: es =>
         val step = Step(suiteId, testName, getCaption(formatter, testText, scope), Result.Failed, throwable, alerts, notes)
         getJourneys(es, scope, Nil, Nil, addStep(step, scope, accum))
       case TestCanceled(_, _, _, suiteId, _, testName, testText, _, throwable, _, formatter, _, _, _, _, _) :: es =>

@@ -2,7 +2,7 @@ package com.github.wongelz.guidebook.selenium
 
 import org.openqa.selenium.{InvalidElementStateException, WebDriver}
 import org.openqa.selenium.support.ui.Select
-import org.scalatest.selenium.WebBrowser
+import org.scalatestplus.selenium.WebBrowser
 
 trait SemanticQueries { this: WebBrowser =>
   /**
