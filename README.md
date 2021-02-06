@@ -19,10 +19,8 @@ Usage
 
 ```
 
-resolvers += Resolver.bintrayRepo("wongelz", "guidebook")
-
 libraryDependencies ++= Seq(
-  "com.github.wongelz"           %% "guidebook"                % "0.4.0"  % Test
+  "com.github.wongelz"           %% "guidebook"                % "0.4.5"  % Test
 )
 
 testOptions in Test ++= Seq(
