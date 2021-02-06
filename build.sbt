@@ -1,8 +1,8 @@
-import sbt.Credentials
-import sbt.Keys.{credentials, organization, publishTo}
-import scala.collection.immutable.Seq
-import sbt.Keys._
 import Path.rebase
+import sbt.Keys.{organization, publishTo, _}
+import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
+
+import scala.collection.immutable.Seq
 
 lazy val commonSettings: Seq[Setting[_]] = Seq(
   organization := "com.github.wongelz",
@@ -53,6 +53,31 @@ lazy val root = (project in file("."))
   .settings(publishArtifact := false)
   .aggregate(library)
 
+organization in ThisBuild := "com.github.wongelz"
+homepage in ThisBuild := Some(url("https://github.com/wongelz/guidebook"))
+scmInfo in ThisBuild := Some(ScmInfo(url("https://github.com/wongelz/guidebook"), "git@github.com:wongelz/guidebook.git"))
+developers in ThisBuild := List(Developer("wongelz", "wongelz", "wongelz@gmail.com", url("https://github.com/wongelz")))
+licenses in ThisBuild += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
 publishMavenStyle in ThisBuild := true
-publishTo in ThisBuild := Some("bintray-wongelz-guidebook" at "https://api.bintray.com/maven/wongelz/guidebook/guidebook/")
-credentials in ThisBuild += Credentials(Path.userHome / ".bintray" / ".credentials")
+
+publishTo in ThisBuild := Some(
+  if (isSnapshot.value)
+    Opts.resolver.sonatypeSnapshots
+  else
+    Opts.resolver.sonatypeStaging
+)
+
+releaseProcess := Seq[ReleaseStep](
+  checkSnapshotDependencies, // check that there are no SNAPSHOT dependencies
+  inquireVersions, // ask user to enter the current and next verion
+  runClean, // clean
+  runTest, // run tests
+  setReleaseVersion, // set release version in version.sbt
+  commitReleaseVersion, // commit the release version
+  tagRelease, // create git tag
+  releaseStepCommandAndRemaining("+publishSigned"), // run +publishSigned command to sonatype stage release
+  setNextVersion, // set next version in version.sbt
+  commitNextVersion, // commint next version
+  releaseStepCommand("sonatypeRelease"), // run sonatypeRelease and publish to maven central
+  pushChanges // push changes to git
+)
