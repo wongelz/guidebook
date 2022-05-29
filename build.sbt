@@ -18,13 +18,13 @@ lazy val client: Project = (project in file("client"))
     publishLocal := {},
     publish := {},
     libraryDependencies ++= Seq(
-      "be.doeraene" %%% "scalajs-jquery" % "1.0.0"
+      "org.scala-js" %%% "scalajs-dom" % "2.2.0"
     ),
-    npmDependencies in Compile += "jquery" -> "2.1.4",
-    npmDependencies in Compile += "popper" -> "1.16.0",
-    npmDependencies in Compile += "bootstrap" -> "4.4.1",
+    Compile / npmDependencies ++= Seq(
+      "bootstrap" -> "5.1.3"
+    ),
     scalaJSUseMainModuleInitializer := true,
-    mainClass in Compile := Some("com.github.wongelz.guidebook.client.ClientMain")
+    Compile / mainClass := Some("com.github.wongelz.guidebook.client.ClientMain")
   )
 
 lazy val library: Project = (project in file("library"))
@@ -39,9 +39,9 @@ lazy val library: Project = (project in file("library"))
       "io.circe"                %% "circe-generic"            % "0.13.0",
       "commons-codec"           %  "commons-codec"            % "1.13"
     ),
-    compile in Compile := ((compile in Compile) dependsOn (fullOptJS in(client, Compile))).value,
-    resourceGenerators in Compile += Def.task {
-      val files = ((crossTarget in(client, Compile)).value ** ("*.js" || "*.map")).get
+    Compile / compile := ((compile in Compile) dependsOn (fullOptJS / webpack in(client, Compile))).value,
+    Compile / resourceGenerators += Def.task {
+      val files = ((crossTarget in(client, Compile)).value ** ("*guidebook*.js" || "*guidebook*.map")).get
       val mappings: scala.Seq[(File, String)] = files pair rebase((crossTarget in(client, Compile)).value, ((resourceManaged in  Compile).value / "assets/").getAbsolutePath )
       val map: scala.Seq[(sbt.File, sbt.File)] = mappings.map { case (s, t) => (s, file(t))}
       IO.copy(map).toSeq
@@ -53,14 +53,14 @@ lazy val root = (project in file("."))
   .settings(publishArtifact := false)
   .aggregate(library)
 
-organization in ThisBuild := "com.github.wongelz"
-homepage in ThisBuild := Some(url("https://github.com/wongelz/guidebook"))
-scmInfo in ThisBuild := Some(ScmInfo(url("https://github.com/wongelz/guidebook"), "git@github.com:wongelz/guidebook.git"))
-developers in ThisBuild := List(Developer("wongelz", "wongelz", "wongelz@gmail.com", url("https://github.com/wongelz")))
-licenses in ThisBuild += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
-publishMavenStyle in ThisBuild := true
+ThisBuild / organization := "com.github.wongelz"
+ThisBuild / homepage := Some(url("https://github.com/wongelz/guidebook"))
+ThisBuild / scmInfo := Some(ScmInfo(url("https://github.com/wongelz/guidebook"), "git@github.com:wongelz/guidebook.git"))
+ThisBuild / developers := List(Developer("wongelz", "wongelz", "wongelz@gmail.com", url("https://github.com/wongelz")))
+ThisBuild / licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
+ThisBuild / publishMavenStyle := true
 
-publishTo in ThisBuild := Some(
+ThisBuild / publishTo := Some(
   if (isSnapshot.value)
     Opts.resolver.sonatypeSnapshots
   else

@@ -84,8 +84,7 @@ object ReportCreator {
           },
           modal
         ),
-        script(src := "guidebook-jsdeps.min.js"),
-        script(src := "guidebook-opt.js")
+        script(src := "guidebook-opt-bundle.js")
       )
     )
   }
@@ -96,13 +95,14 @@ object ReportCreator {
         div(cls := "modal-content")(
           div(cls := "modal-header")(
             h5(cls := "modal-title")("Failure"),
-            button(`type` := "button", cls := "close", data("dismiss") := "modal", aria.label := "Close")(
+            button(`type` := "button", cls := "close", data("bs-dismiss") := "modal", aria.label := "Close")(
               span(aria.hidden := "true")(raw("&times;"))
             )
           ),
           div(cls := "modal-body")(
             figure(cls := "thumbnail")(
-              div(id := "modal-body-screenshot", cls := "hidden")(
+              div(id := "modal-body-alerts"),
+              div(id := "modal-body-screenshot")(
                 a(target := "_blank")(
                   img(cls := "img-fluid img-thumbnail")
                 )
@@ -177,12 +177,12 @@ object ReportCreator {
           figure(cls := "thumbnail")(
             s.result match {
               case Result.Passed =>
-                a(cls := "guidebook-step", href := s.screenshot(screen), title := s.caption, data("toggle") := "modal", data("target") := "#modal",
+                a(cls := "guidebook-step", href := s.screenshot(screen), title := s.caption, data("bs-toggle") := "modal", data("bs-target") := "#modal",
                   data("guidebook-step") := s.asJson.noSpaces, data("journey") := journey.description)(
                   img(cls := "figure-img img-fluid img-thumbnail bg-success", src := s.screenshot(screen))
                 )
               case Result.Failed =>
-                a(cls := "guidebook-step", href := s.screenshot(screen), title := s.caption, data("toggle") := "modal", data("target") := "#modal",
+                a(cls := "guidebook-step", href := s.screenshot(screen), title := s.caption, data("bs-toggle") := "modal", data("bs-target") := "#modal",
                   data("guidebook-step") := s.asJson.noSpaces, data("journey") := journey.description)(
                   img(cls := "figure-img img-fluid img-thumbnail bg-danger", src := s.screenshot(screen))
                 )
